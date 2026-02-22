@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Statspack Meeting Portal</title>
-
-<script src='https://8x8.vc/vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/external_api.js' async></script>
+<title>Statspack Portal</title>
 
 <style>
 body{
@@ -49,18 +47,28 @@ width:28px;
 filter: brightness(0) invert(1);
 }
 
-/* MEETING AREA */
+/* VIDEO AREA */
 .meeting-container{
 padding:20px;
 height:75vh;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-#jaas-container{
+.video-wrapper{
 width:100%;
 height:100%;
+max-width:1100px;
 border-radius:14px;
 overflow:hidden;
 box-shadow:0px 0px 25px rgba(0,0,0,0.5);
+}
+
+.video-wrapper iframe{
+width:100%;
+height:100%;
+border:0;
 }
 
 /* FOOTER */
@@ -81,15 +89,6 @@ text-decoration:none;
 text-decoration:underline;
 }
 </style>
-
-<script>
-window.onload = () => {
-  const api = new JitsiMeetExternalAPI("8x8.vc", {
-    roomName: "vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/SampleAppConvincedSecondsAskPromptly",
-    parentNode: document.querySelector('#jaas-container')
-  });
-}
-</script>
 
 </head>
 
@@ -126,15 +125,22 @@ window.onload = () => {
 </div>
 </div>
 
-<!-- MEETING -->
+<!-- VIDEO SECTION -->
 <div class="meeting-container">
-<div id="jaas-container"></div>
+  <div class="video-wrapper">
+    <iframe 
+      src="https://www.youtube.com/embed/ReQB4Q6t3JM"
+      title="Statspack Video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
 </div>
 
 <!-- FOOTER -->
 <div class="footer">
 © 2026 Statspack International. All Rights Reserved.<br>
-Inquiries: <a href="mailto:inquiries@statspackbw.com">inquiries@statspackbw.com</a>
+Inquiries: <a href="mailto:samuel.mefane@statspackbw.com">samuel.mefane@statspackbw.com</a>
 </div>
 
 </body>
