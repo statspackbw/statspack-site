@@ -6,105 +6,161 @@
 <title>Statspack Training Portal</title>
 
 <!-- JaaS External API -->
-<script src="https://8x8.vc/vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/external_api.js" async></script>
+<script src="https://8x8.vc/vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/external_api.js"></script>
 
-<!-- EmailJS -->
+<!-- EmailJS (SAFE LOAD) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* ───── YOUR FULL CSS (UNCHANGED FOR BREVITY) ───── */
-/* Keep your existing CSS exactly as-is */
+/* KEEP YOUR ORIGINAL CSS HERE (UNCHANGED) */
+body { font-family: Arial; background:#0b0f1a; color:white; }
+.section { display:none; }
+.section.active { display:block; }
 </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
-<header class="header">
-  <img src="logo.png" alt="Statspack" class="logo">
+<header>
+  <h2>Statspack Training Portal</h2>
 </header>
 
 <!-- NAV -->
-<nav class="nav-tabs">
+<nav>
   <button class="nav-tab active" onclick="switchTab('meeting')">Live Meeting Room</button>
   <button class="nav-tab" onclick="switchTab('register')">Register for Training</button>
 </nav>
 
-<!-- MEETING SECTION -->
-<section id="tab-meeting" class="section active meeting-section">
+<!-- MEETING -->
+<section id="tab-meeting" class="section active">
+
   <div id="password-gate">
     <input type="password" id="room-password" placeholder="Enter password">
     <button onclick="unlockMeeting()">Enter</button>
   </div>
 
   <div id="meeting-area" style="display:none;">
-    <div id="jaas-container"></div>
+    <div id="jaas-container" style="height:500px;"></div>
   </div>
+
 </section>
 
-<!-- REGISTRATION SECTION -->
-<section id="tab-register" class="section form-section">
+<!-- REGISTER -->
+<section id="tab-register" class="section">
 
-<div class="form-card">
-<h2>Training Registration</h2>
+  <h2>Training Registration</h2>
 
-<div id="form-feedback"></div>
+  <div id="form-feedback"></div>
 
-<form id="training-form" onsubmit="submitForm(event)">
+  <form id="training-form" onsubmit="submitForm(event)">
 
-  <input type="text" name="full_name" placeholder="Full Name" required>
-  <input type="email" name="email" placeholder="Email" required>
-  <input type="tel" name="phone" placeholder="Phone" required>
+    <input type="text" name="full_name" placeholder="Full Name" required><br><br>
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="tel" name="phone" placeholder="Phone" required><br><br>
 
-  <select name="country" required>
-    <option value="">Select Country</option>
-    <option>Lesotho</option>
-    <option>South Africa</option>
-  </select>
+    <select name="country" required>
+      <option value="">Select Country</option>
+      <option>Lesotho</option>
+      <option>South Africa</option>
+    </select><br><br>
 
-  <input type="text" name="city" placeholder="City" required>
+    <input type="text" name="city" placeholder="City" required><br><br>
 
-  <div>
     <label><input type="radio" name="has_requirements" value="Yes" required> Yes</label>
-    <label><input type="radio" name="has_requirements" value="No"> No</label>
-  </div>
+    <label><input type="radio" name="has_requirements" value="No"> No</label><br><br>
 
-  <input type="text" name="preferred_time" placeholder="Preferred Time">
+    <input type="text" name="preferred_time" placeholder="Preferred Time"><br><br>
 
-  <textarea name="notes" placeholder="Notes"></textarea>
+    <textarea name="notes" placeholder="Notes"></textarea><br><br>
 
-  <button type="submit" id="submit-btn">Submit Registration</button>
+    <button type="submit" id="submit-btn">Submit Registration</button>
 
-</form>
-</div>
+  </form>
 
 </section>
 
 <!-- FOOTER -->
-<footer class="footer">
-© 2026 Statspack
+<footer>
+  © 2026 Statspack
 </footer>
 
 <script>
-/* ───── EMAILJS SETUP ───── */
+/* =========================
+   EMAILJS SAFE INITIALIZE
+========================= */
 const EMAILJS_SERVICE_ID  = 'service_p4ybasm';
 const EMAILJS_TEMPLATE_ID = 'template_6q100il';
 const EMAILJS_PUBLIC_KEY  = 'Ff0na9fvMYI90piCy';
 
-(function(){
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-})();
+/* IMPORTANT: prevents white screen crash */
+window.addEventListener("load", function () {
+  if (window.emailjs) {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    console.log("EmailJS initialized");
+  } else {
+    console.error("EmailJS failed to load");
+  }
+});
 
-/* ───── FORM SUBMISSION ───── */
+/* =========================
+   TAB SWITCH
+========================= */
+function switchTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+/* =========================
+   PASSWORD PROTECTION
+========================= */
+const ROOM_PASSWORD = "VMS";
+
+function unlockMeeting() {
+  const input = document.getElementById('room-password');
+
+  if (input.value === ROOM_PASSWORD) {
+    document.getElementById('password-gate').style.display = "none";
+    document.getElementById('meeting-area').style.display = "block";
+    launchJitsi();
+  } else {
+    alert("Wrong password");
+  }
+}
+
+/* =========================
+   JITSI
+========================= */
+function launchJitsi() {
+  if (!window.JitsiMeetExternalAPI) {
+    alert("Meeting system failed to load");
+    return;
+  }
+
+  new JitsiMeetExternalAPI('8x8.vc', {
+    roomName: 'vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/StatspackPlatform',
+    parentNode: document.querySelector('#jaas-container')
+  });
+}
+
+/* =========================
+   EMAILJS FORM
+========================= */
 function submitForm(e) {
   e.preventDefault();
 
   const form = document.getElementById('training-form');
   const btn = document.getElementById('submit-btn');
   const feedback = document.getElementById('form-feedback');
+
+  if (!window.emailjs) {
+    feedback.textContent = "Email service not loaded. Try again.";
+    feedback.style.color = "red";
+    return;
+  }
 
   btn.disabled = true;
   btn.textContent = "Sending...";
@@ -115,49 +171,18 @@ function submitForm(e) {
     form
   )
   .then(() => {
-    feedback.style.display = "block";
     feedback.style.color = "green";
     feedback.textContent = "✓ Registration submitted successfully!";
     form.reset();
-    btn.disabled = false;
-    btn.textContent = "Submit Registration";
   })
   .catch((err) => {
     console.error(err);
-    feedback.style.display = "block";
     feedback.style.color = "red";
-    feedback.textContent = "✗ Failed to send. Try again.";
+    feedback.textContent = "✗ Failed to send. Try again or email support.";
+  })
+  .finally(() => {
     btn.disabled = false;
     btn.textContent = "Submit Registration";
-  });
-}
-
-/* ───── TAB SWITCH ───── */
-function switchTab(tab) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-}
-
-/* ───── MEETING PASSWORD ───── */
-const ROOM_PASSWORD = "VMS";
-
-function unlockMeeting() {
-  const input = document.getElementById('room-password');
-
-  if (input.value === ROOM_PASSWORD) {
-    document.getElementById('password-gate').style.display = "none";
-    document.getElementById('meeting-area').style.display = "block";
-
-    launchJitsi();
-  } else {
-    alert("Wrong password");
-  }
-}
-
-function launchJitsi() {
-  new JitsiMeetExternalAPI('8x8.vc', {
-    roomName: 'vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/StatspackPlatform',
-    parentNode: document.querySelector('#jaas-container')
   });
 }
 </script>
