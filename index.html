@@ -6,184 +6,797 @@
 <title>Statspack Training Portal</title>
 
 <!-- JaaS External API -->
-<script src="https://8x8.vc/vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/external_api.js"></script>
+<script src="https://8x8.vc/vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/external_api.js" async></script>
 
-<!-- EmailJS (SAFE LOAD) -->
+<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* KEEP YOUR ORIGINAL CSS HERE (UNCHANGED) */
-body { font-family: Arial; background:#0b0f1a; color:white; }
-.section { display:none; }
-.section.active { display:block; }
+:root {
+  --navy:       #040d1a;
+  --deep:       #071428;
+  --mid:        #0c2040;
+  --panel:      rgba(10,30,60,0.75);
+  --border:     rgba(77,166,255,0.18);
+  --accent:     #2a80e1;
+  --accent-hi:  #5babff;
+  --gold:       #e8b84b;
+  --text:       #cce0ff;
+  --muted:      #7a9ac0;
+  --white:      #f0f8ff;
+  --danger:     #e84b4b;
+  --success:    #3ecf72;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Sora', sans-serif;
+  background-color: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(42,128,225,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(232,184,75,0.07) 0%, transparent 55%),
+    linear-gradient(160deg, #040d1a 0%, #071428 50%, #040d1a 100%);
+  z-index: -1;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 48px;
+  background: rgba(4,13,26,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo { height: 140px; object-fit: contain; }
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.tagline {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+.social-icons { display: flex; gap: 12px; align-items: center; }
+
+.social-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(42,128,225,0.1);
+  border: 1px solid var(--border);
+  transition: all 0.25s;
+  text-decoration: none;
+}
+
+.social-icons a:hover {
+  background: rgba(42,128,225,0.25);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(42,128,225,0.3);
+}
+
+.social-icons img { width: 16px; height: 16px; object-fit: contain; }
+.web-icon { filter: brightness(0) invert(0.7) sepia(1) saturate(3) hue-rotate(195deg); }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 28px 40px 0;
+}
+
+.nav-tab {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.nav-tab:hover { color: var(--white); border-color: rgba(42,128,225,0.4); }
+
+.nav-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(42,128,225,0.4);
+}
+
+/* ── SECTIONS ── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── MEETING SECTION ── */
+.meeting-section { padding: 28px 40px 40px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(232,184,75,0.15);
+  color: var(--gold);
+  border: 1px solid rgba(232,184,75,0.3);
+}
+
+.badge.live {
+  background: rgba(62,207,114,0.15);
+  color: var(--success);
+  border-color: rgba(62,207,114,0.3);
+}
+
+.badge.live::before {
+  content: '● ';
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* PASSWORD GATE */
+#password-gate {
+  max-width: 440px;
+  margin: 60px auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px 40px;
+  backdrop-filter: blur(20px);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+#password-gate .lock-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+#password-gate h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+#password-gate p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+#password-gate input[type="password"] {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(4,13,26,0.7);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  letter-spacing: 4px;
+  text-align: center;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+#password-gate input[type="password"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(42,128,225,0.15);
+}
+
+#password-gate input[type="password"].shake {
+  animation: shake 0.4s;
+  border-color: var(--danger);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+#pw-error {
+  font-size: 12px;
+  color: var(--danger);
+  height: 16px;
+  margin-bottom: 14px;
+  transition: opacity 0.2s;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 36px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hi);
+  box-shadow: 0 0 24px rgba(42,128,225,0.5);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* MEETING FRAME */
+#meeting-area { display: none; }
+
+#jaas-container {
+  width: 100%;
+  height: 76vh;
+  max-width: 1280px;
+  margin: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+}
+
+/* ── FORM SECTION ── */
+.form-section { padding: 28px 40px 60px; }
+
+.form-card {
+  max-width: 700px;
+  margin: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px 48px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.form-card h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.form-card .subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 36px;
+  line-height: 1.7;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full { grid-column: 1 / -1; }
+
+.form-group label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 16px;
+  background: rgba(4,13,26,0.6);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.form-group select { cursor: pointer; }
+.form-group select option { background: var(--deep); }
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(42,128,225,0.15);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: var(--muted); opacity: 0.7; }
+
+.form-group textarea { resize: vertical; min-height: 90px; }
+
+/* required asterisk */
+.req { color: var(--accent-hi); margin-left: 2px; }
+
+/* radio group */
+.radio-group {
+  display: flex;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: 'Sora', sans-serif;
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] { accent-color: var(--accent); }
+
+.form-footer {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.btn-submit {
+  padding: 15px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Sora', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: var(--accent-hi);
+  box-shadow: 0 0 28px rgba(42,128,225,0.5);
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.form-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* feedback banner */
+#form-feedback {
+  display: none;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+
+#form-feedback.success {
+  display: block;
+  background: rgba(62,207,114,0.12);
+  border: 1px solid rgba(62,207,114,0.35);
+  color: var(--success);
+}
+
+#form-feedback.error {
+  display: block;
+  background: rgba(232,75,75,0.12);
+  border: 1px solid rgba(232,75,75,0.35);
+  color: var(--danger);
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 24px 20px;
+  background: rgba(0,0,0,0.35);
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 2;
+}
+
+.footer a { color: var(--accent-hi); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .header { padding: 16px 20px; flex-wrap: wrap; gap: 14px; }
+  .logo { height: 90px; }
+  .nav-tabs { padding: 20px 16px 0; flex-wrap: wrap; }
+  .meeting-section, .form-section { padding: 20px 16px 40px; }
+  .form-card { padding: 28px 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  #jaas-container { height: 65vh; }
+  #password-gate { padding: 36px 24px; }
+}
 </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-<header>
-  <h2>Statspack Training Portal</h2>
+<!-- ─── HEADER ─── -->
+<header class="header">
+  <img src="logo.png" alt="Statspack" class="logo">
+  <div class="header-right">
+    <span class="tagline">Training Portal &nbsp;·&nbsp; Software Resellers</span>
+    <div class="social-icons">
+      <a href="https://statspack.africa/" target="_blank" title="Website">
+        <img class="web-icon" src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Web">
+      </a>
+      <a href="https://x.com/Statspack33" target="_blank" title="X / Twitter">
+        <img src="https://cdn-icons-png.flaticon.com/512/5969/5969020.png" alt="X">
+      </a>
+      <a href="https://www.linkedin.com/company/statspack/posts/?feedView=all" target="_blank" title="LinkedIn">
+        <img src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png" alt="LinkedIn">
+      </a>
+      <a href="https://www.facebook.com/statspack/" target="_blank" title="Facebook">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+      </a>
+      <a href="https://www.youtube.com/@statspack" target="_blank" title="YouTube">
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+      </a>
+      <a href="https://wa.me/26668088101" target="_blank" title="WhatsApp">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+      </a>
+    </div>
+  </div>
 </header>
 
-<!-- NAV -->
-<nav>
-  <button class="nav-tab active" onclick="switchTab('meeting')">Live Meeting Room</button>
-  <button class="nav-tab" onclick="switchTab('register')">Register for Training</button>
+<!-- ─── NAV TABS ─── -->
+<nav class="nav-tabs">
+  <button class="nav-tab active" onclick="switchTab('meeting')">🎥 &nbsp;Live Meeting Room</button>
+  <button class="nav-tab" onclick="switchTab('register')">📋 &nbsp;Register for Training</button>
 </nav>
 
-<!-- MEETING -->
-<section id="tab-meeting" class="section active">
+<!-- ─── MEETING SECTION ─── -->
+<section id="tab-meeting" class="section active meeting-section">
 
+  <div class="section-header">
+    <h2>Live Training Room</h2>
+    <span class="badge live">Live</span>
+    <span class="badge">Password Protected</span>
+  </div>
+
+  <!-- PASSWORD GATE -->
   <div id="password-gate">
-    <input type="password" id="room-password" placeholder="Enter password">
-    <button onclick="unlockMeeting()">Enter</button>
+    <span class="lock-icon">🔐</span>
+    <h3>Meeting Room Access</h3>
+    <p>This room is restricted to authorised Statspack software resellers.<br>
+    Enter the session password provided by your trainer to proceed.</p>
+    <input type="password" id="room-password" placeholder="Enter password" autocomplete="off">
+    <div id="pw-error"></div>
+    <button class="btn-primary" onclick="unlockMeeting()">Enter Meeting Room</button>
   </div>
 
-  <div id="meeting-area" style="display:none;">
-    <div id="jaas-container" style="height:500px;"></div>
+  <!-- MEETING FRAME (hidden until password correct) -->
+  <div id="meeting-area">
+    <div id="jaas-container"></div>
   </div>
 
 </section>
 
-<!-- REGISTER -->
-<section id="tab-register" class="section">
+<!-- ─── REGISTRATION SECTION ─── -->
+<section id="tab-register" class="section form-section">
 
-  <h2>Training Registration</h2>
+  <div class="form-card">
+    <h2>Training Registration</h2>
+    <p class="subtitle">
+      Complete the form below to register for a Statspack software reseller training session.
+      Our team will confirm your slot and send you meeting access details by email.
+    </p>
 
-  <div id="form-feedback"></div>
+    <div id="form-feedback"></div>
 
-  <form id="training-form" onsubmit="submitForm(event)">
+    <form id="training-form" onsubmit="submitForm(event)" novalidate>
+      <div class="form-grid">
 
-    <input type="text" name="full_name" placeholder="Full Name" required><br><br>
-    <input type="email" name="email" placeholder="Email" required><br><br>
-    <input type="tel" name="phone" placeholder="Phone" required><br><br>
+        <!-- Full Name -->
+        <div class="form-group full">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" name="full_name" placeholder="e.g. Thabo Mokoena" required>
+        </div>
 
-    <select name="country" required>
-      <option value="">Select Country</option>
-      <option>Lesotho</option>
-      <option>South Africa</option>
-    </select><br><br>
+        <!-- Email -->
+        <div class="form-group">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" name="email" placeholder="you@example.com" required>
+        </div>
 
-    <input type="text" name="city" placeholder="City" required><br><br>
+        <!-- Phone -->
+        <div class="form-group">
+          <label>Phone Number <span class="req">*</span></label>
+          <input type="tel" name="phone" placeholder="+266 __ __ __ __" required>
+        </div>
 
-    <label><input type="radio" name="has_requirements" value="Yes" required> Yes</label>
-    <label><input type="radio" name="has_requirements" value="No"> No</label><br><br>
+        <!-- Country -->
+        <div class="form-group">
+          <label>Country <span class="req">*</span></label>
+          <select name="country" required>
+            <option value="" disabled selected>Select country…</option>
+            <option>Botswana</option>
+            <option>Eswatini</option>
+            <option>Kenya</option>
+            <option>Lesotho</option>
+            <option>Malawi</option>
+            <option>Mozambique</option>
+            <option>Namibia</option>
+            <option>South Africa</option>
+            <option>Tanzania</option>
+            <option>Uganda</option>
+            <option>Zambia</option>
+            <option>Zimbabwe</option>
+            <option>Other</option>
+          </select>
+        </div>
 
-    <input type="text" name="preferred_time" placeholder="Preferred Time"><br><br>
+        <!-- City -->
+        <div class="form-group">
+          <label>City <span class="req">*</span></label>
+          <input type="text" name="city" placeholder="e.g. Maseru" required>
+        </div>
 
-    <textarea name="notes" placeholder="Notes"></textarea><br><br>
+        <!-- Required equipment -->
+        <div class="form-group full">
+          <label>Do you have all required hardware & software? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="has_requirements" value="Yes — fully equipped" required>
+              Yes — fully equipped
+            </label>
+            <label>
+              <input type="radio" name="has_requirements" value="Partially — some items missing">
+              Partially — some items missing
+            </label>
+            <label>
+              <input type="radio" name="has_requirements" value="No — I need guidance">
+              No — I need guidance
+            </label>
+          </div>
+        </div>
 
-    <button type="submit" id="submit-btn">Submit Registration</button>
+        <!-- Preferred training time -->
+        <div class="form-group full">
+          <label>Preferred Training Date / Time</label>
+          <input type="text" name="preferred_time" placeholder="e.g. Any weekday afternoon (CAT)">
+        </div>
 
-  </form>
+        <!-- Notes -->
+        <div class="form-group full">
+          <label>Additional Notes</label>
+          <textarea name="notes" placeholder="Any questions, special requirements, or items to flag…"></textarea>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <div class="form-footer">
+        <button type="submit" class="btn-submit" id="submit-btn">Submit Registration →</button>
+        <p class="form-note">
+          Your information is used solely to schedule and confirm your training session.<br>
+          Confirmation will be sent to <strong>compliance@statspack.africa</strong>.
+        </p>
+      </div>
+    </form>
+  </div>
 
 </section>
 
-<!-- FOOTER -->
-<footer>
-  © 2026 Statspack
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  © 2026 Statspack International. All Rights Reserved.<br>
+  Training enquiries: <a href="mailto:compliance@statspack.africa">compliance@statspack.africa</a>
+  &nbsp;|&nbsp;
+  <a href="https://statspack.africa/" target="_blank">statspack.africa</a>
 </footer>
 
+
 <script>
-/* =========================
-   EMAILJS SAFE INITIALIZE
-========================= */
+/* ══════════════════════════════════
+   TAB NAVIGATION
+══════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* ══════════════════════════════════
+   MEETING ROOM PASSWORD
+   Password: VMS
+══════════════════════════════════ */
+const ROOM_PASSWORD = 'VMS';
+
+function unlockMeeting() {
+  const input = document.getElementById('room-password');
+  const errEl = document.getElementById('pw-error');
+  const val   = input.value.trim();
+
+  if (val === ROOM_PASSWORD) {
+    errEl.textContent = '';
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('meeting-area').style.display  = 'block';
+    launchJitsi();
+  } else {
+    errEl.textContent = 'Incorrect password. Please try again.';
+    input.value = '';
+    input.classList.remove('shake');
+    void input.offsetWidth; // reflow to restart animation
+    input.classList.add('shake');
+    setTimeout(() => input.classList.remove('shake'), 500);
+    input.focus();
+  }
+}
+
+// Also allow Enter key
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('room-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') unlockMeeting();
+  });
+});
+
+function launchJitsi() {
+  const api = new JitsiMeetExternalAPI('8x8.vc', {
+    roomName: 'vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/StatspackPlatform',
+    parentNode: document.querySelector('#jaas-container'),
+    // Uncomment and add JWT if needed:
+    // jwt: 'YOUR_JWT_TOKEN',
+    configOverwrite: {
+      startWithAudioMuted: true,
+      startWithVideoMuted: false,
+      disableDeepLinking: true,
+    },
+    interfaceConfigOverwrite: {
+      SHOW_JITSI_WATERMARK: false,
+      SHOW_WATERMARK_FOR_GUESTS: false,
+    }
+  });
+}
+
+/* ══════════════════════════════════
+   EMAIL JS — TRAINING FORM
+══════════════════════════════════ */
 const EMAILJS_SERVICE_ID  = 'service_p4ybasm';
 const EMAILJS_TEMPLATE_ID = 'template_6q100il';
 const EMAILJS_PUBLIC_KEY  = 'Ff0na9fvMYI90piCy';
 
-/* IMPORTANT: prevents white screen crash */
-window.addEventListener("load", function () {
-  if (window.emailjs) {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    console.log("EmailJS initialized");
-  } else {
-    console.error("EmailJS failed to load");
-  }
-});
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
-/* =========================
-   TAB SWITCH
-========================= */
-function switchTab(tab) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-}
-
-/* =========================
-   PASSWORD PROTECTION
-========================= */
-const ROOM_PASSWORD = "VMS";
-
-function unlockMeeting() {
-  const input = document.getElementById('room-password');
-
-  if (input.value === ROOM_PASSWORD) {
-    document.getElementById('password-gate').style.display = "none";
-    document.getElementById('meeting-area').style.display = "block";
-    launchJitsi();
-  } else {
-    alert("Wrong password");
-  }
-}
-
-/* =========================
-   JITSI
-========================= */
-function launchJitsi() {
-  if (!window.JitsiMeetExternalAPI) {
-    alert("Meeting system failed to load");
-    return;
-  }
-
-  new JitsiMeetExternalAPI('8x8.vc', {
-    roomName: 'vpaas-magic-cookie-2bf4fd115a2c4bb2abdae6ac8c4207a7/StatspackPlatform',
-    parentNode: document.querySelector('#jaas-container')
-  });
-}
-
-/* =========================
-   EMAILJS FORM
-========================= */
 function submitForm(e) {
   e.preventDefault();
-
-  const form = document.getElementById('training-form');
-  const btn = document.getElementById('submit-btn');
+  const form     = document.getElementById('training-form');
+  const btn      = document.getElementById('submit-btn');
   const feedback = document.getElementById('form-feedback');
 
-  if (!window.emailjs) {
-    feedback.textContent = "Email service not loaded. Try again.";
-    feedback.style.color = "red";
+  // Basic validation
+  const radio = form.querySelector('input[name="has_requirements"]:checked');
+  if (!radio) {
+    feedback.className = 'error';
+    feedback.textContent = 'Please indicate whether you have the required hardware & software.';
+    feedback.style.display = 'block';
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = "Sending...";
+  btn.disabled        = true;
+  btn.textContent     = 'Sending…';
+  feedback.style.display = 'none';
 
-  emailjs.sendForm(
-    EMAILJS_SERVICE_ID,
-    EMAILJS_TEMPLATE_ID,
-    form
-  )
-  .then(() => {
-    feedback.style.color = "green";
-    feedback.textContent = "✓ Registration submitted successfully!";
-    form.reset();
-  })
-  .catch((err) => {
-    console.error(err);
-    feedback.style.color = "red";
-    feedback.textContent = "✗ Failed to send. Try again or email support.";
-  })
-  .finally(() => {
-    btn.disabled = false;
-    btn.textContent = "Submit Registration";
-  });
+  const templateParams = {
+    full_name:        form.querySelector('[name="full_name"]').value.trim(),
+    email:            form.querySelector('[name="email"]').value.trim(),
+    phone:            form.querySelector('[name="phone"]').value.trim(),
+    country:          form.querySelector('[name="country"]').value,
+    city:             form.querySelector('[name="city"]').value.trim(),
+    has_requirements: radio.value,
+    preferred_time:   form.querySelector('[name="preferred_time"]').value.trim() || 'Not specified',
+    notes:            form.querySelector('[name="notes"]').value.trim() || 'None',
+  };
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+    .then(() => {
+      feedback.className   = 'success';
+      feedback.textContent = '✓ Registration submitted! We will confirm your training slot at ' + templateParams.email + ' shortly.';
+      feedback.style.display = 'block';
+      form.reset();
+      btn.disabled    = false;
+      btn.textContent = 'Submit Registration →';
+      window.scrollTo({ top: document.getElementById('form-feedback').offsetTop - 60, behavior: 'smooth' });
+    })
+    .catch(err => {
+      console.error('EmailJS error:', err);
+      feedback.className   = 'error';
+      feedback.textContent = '✗ Something went wrong. Please email us directly at compliance@statspack.africa';
+      feedback.style.display = 'block';
+      btn.disabled    = false;
+      btn.textContent = 'Submit Registration →';
+    });
 }
 </script>
 
